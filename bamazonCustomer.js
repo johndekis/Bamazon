@@ -56,6 +56,7 @@ function tabulate(){
 
 //FUNCTION  to guide customer through purchase =======================================================
 function customerOptions(){
+  
     inquirer.prompt([
       {
         name: "idChoice",
