@@ -107,19 +107,6 @@ function viewLowStock(){
     });
 }
 
-function pusher(array){
-    
-    connection.query('SELECT * FROM products', function(err, results){
-        for(var i = 0; i<results.length; i++){
-            //var productArray = [];
-            array.push(results[i].product_name);
-            //console.log(productArray);
-           
-        }
-        
-    });
-}
-
 function reStock(){
     var productArray = [];
     //pusher(productArray);
@@ -163,11 +150,35 @@ function reStock(){
         });
     });
 }
-    
 
-
-function addProduct(product){
-
+function addProduct(){
+    inquirer.prompt([
+        {
+    name: "newThing",
+    type: "input",
+    message: "What is the name of the new product?"
+        },
+        {
+    name: "dept",
+    type: "list",
+    message: "Which department?",
+    choices: ["Magical", "Weapons"]
+        },
+        {
+    name: "price",
+    type: "input",
+    message: "The unit price?"
+        },
+        {
+    name: "amount",
+    type: "input",
+    message: "The initial stock quantity?"
+        }
+    ]).then(answers => {
+        
+        connection.query('INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?);', [answers.newThing, answers.dept, answers.price, answers.amount]);
+        console.log(`${answers.newThing} added to the ${answers.dept} Department! `.rainbow);
+    });
 }
 
 start();
