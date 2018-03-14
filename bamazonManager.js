@@ -4,8 +4,6 @@ var inquirer = require('inquirer');
 var colors = require('colors');
 var Table = require('cli-table');
 
-
-
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -14,13 +12,8 @@ var connection = mysql.createConnection({
     database: "bamazon"
   });
 
-//FUNCTIONS=======================================================
-//FUNCTION menu options
-  //products for sale ===> tabulate fuction XXX
-  //low iventory (<5). XXX
-  //add to inventory your app should display a prompt that will let the manager "add more" of any item currently in the store.
-  //add new product
-  function start(){
+//FUNCTION to begin ============================================================================
+function start(){
     
     connection.connect(function(err) {
        if (err) throw err;
@@ -34,9 +27,9 @@ var connection = mysql.createConnection({
     
     
     });
-  }
+}
   
-//FUNCTION  to guide manager through processes =======================================================  
+//FUNCTION  to guide manager through processes ==================================================  
 function mgmtOptions(){
     inquirer.prompt([
         {
@@ -52,20 +45,19 @@ function mgmtOptions(){
                 tabulate();
                 break;
             case "View Low Inventory Items":
-                viewLowStock();//code block
+                viewLowStock();
                 break;
             case "Add to Inventory":
                 reStock();
                 break;
             case "Add New Product":
                 addProduct();
-                break;
-            
+                break;            
         }
     })
 }
 
-  // FUNCTION that generates table on start and after updates ==========================================
+// FUNCTION that generates table ================================================================
 function tabulate(){
     connection.query('SELECT * FROM products', function(err, results) {
       if(err) throw err;
@@ -82,9 +74,12 @@ function tabulate(){
    console.log(`  
  ${table.toString()} 
     `);
+    recurz();
    });
+   
 } 
 
+//FUNCTION to show items w/stock less than 5=====================================================
 function viewLowStock(){
     connection.query('SELECT * FROM products WHERE stock_quantity < 5', function(err, results){
         if(err) throw err;
@@ -101,12 +96,16 @@ function viewLowStock(){
          }
      console.log(`
     
-     ${lowTable.toString()}
+${lowTable.toString()}
     
      `);
+    recurz();
     });
+
+    
 }
 
+//FUNCTION to add to current inventory===========================================================
 function reStock(){
     var productArray = [];
     //pusher(productArray);
@@ -144,13 +143,13 @@ function reStock(){
         Treasury Restocked! Our ${answers.product} supply has grown to by ${answers.amount}! Glory to Bamazon.
         `.rainbow);    
         });
-        
-        //console.log(answers); //answers.product
-        
+       recurz();
         });
     });
+ 
 }
 
+//FUNCTION to add a new product to table=========================================================
 function addProduct(){
     inquirer.prompt([
         {
@@ -178,6 +177,27 @@ function addProduct(){
         
         connection.query('INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?);', [answers.newThing, answers.dept, answers.price, answers.amount]);
         console.log(`${answers.newThing} added to the ${answers.dept} Department! `.rainbow);
+     recurz();   
+    });
+    
+}
+
+//FUNCTION for some recursion to keep things running=============================================
+function recurz(){
+    inquirer.prompt([
+        {
+          name: "redo",
+          type: "confirm",
+          message: "Back to Menu?"  
+        }
+    ]).then(answers => {
+        if(answers.redo){
+            mgmtOptions();
+        } else {
+            console.log("See Ya Later!");
+            return;
+        } 
+        
     });
 }
 

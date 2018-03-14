@@ -47,7 +47,7 @@ function tabulate(){
      }
  console.log(`
 
- ${table.toString()}
+${table.toString()}
 
  `.blue);
  });
