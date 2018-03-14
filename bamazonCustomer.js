@@ -78,40 +78,51 @@ function customerOptions(){
     ]).then(answers => {
       var choice = answers.idChoice;
       var num = answers.quantity;
-          
-      connection.query("SELECT * FROM products WHERE id =?", [choice], function(err, results){
-        if(err) throw err;
-        
+  if(answers.confirmation){
+    connection.query("SELECT * FROM products WHERE id =?", [choice], function(err, results){
+      if(err) throw err;
+                
+      console.log(`
+  You have selected to purchase ${num}  of our ${results[0].product_name}s for $${results[0].price}.00 each.`.green);
+                
+      if(parseInt(num)>parseInt(results[0].stock_quantity)){
+                  console.log(`
+  So sorry, we do not have enough ${results[0].product_name}s to comeplete your order!
+                  `.red);
+                  
+ //   falls through to  line 116;
+                  
+                  
+    } else {
         console.log(`
-  You have selected to purchase  ${num}  of our ${results[0].product_name}s for $${results[0].price}.00 each.`.green);
-        
-        if(parseInt(num)>parseInt(results[0].stock_quantity)){
-          console.log(`
-          So sorry, we do not have enough ${results[0].product_name} to comeplete your order!
-          `.red);
-          return;
-          //reStart();
-          
-        } else {
-          console.log(`You are in luck! We have plenty ${results[0].product_name}s in stock. Your order will be teleported to your
- current location upon the success of your payment.`.green);
-        
-      connection.query("UPDATE products SET stock_quantity=? WHERE id=?", [(results[0].stock_quantity-num), choice], function(err,results){
+  You are in luck! We have plenty ${results[0].product_name}s in stock. Your order will be teleported to your
+    current location upon the success of your payment.`.green);
+                
+        connection.query("UPDATE products SET stock_quantity=? WHERE id=?", [(results[0].stock_quantity-num), choice], function(err,results){
         if(err) throw err;
-        connection.query("SELECT * FROM products WHERE id =?", [choice], function(err, results){
+          connection.query("SELECT * FROM products WHERE id =?", [choice], function(err, results){
           console.log(`
-    
-    ...Processing
+            
+      ...Processing
 
-        $${parseInt(num)*parseInt(results[0].price)}.00 has been absorbed from your personal bank account into the Bamazon Treasury. 
-    Thank you for your obedience. Make more purchases soon.`.rainbow);
-   
-        });
-      });  //UPDATE query end
-        }
-    });// SELECT query using answers 
-        
-    setTimeout(reStart, 2000); // runs after UPDATE has completed. Also the return after the quantity apology message falls through to this, just happened to work out 
+    $${parseInt(num)*parseInt(results[0].price)}.00 has been absorbed from your personal bank account into the Bamazon Treasury. 
+        Thank you for your obedience. Make more purchases soon.`.rainbow);
+          
+          });
+        });  //UPDATE query end
+      }
+      });// SELECT query using answers 
+                
+      setTimeout(reStart, 2000); // runs after UPDATE has completed 
+  } else {
+      console.log(`
+      
+            Bamazon: Magical Items and Weapons Depot
+
+  `.rainbow);
+  setTimeout(reStart, 2000);
+      }   
+       
     
   });
 }
@@ -136,7 +147,7 @@ function reStart() {
     } else {
       console.log(`
       
-      Thank you for choosing Bamazon. Enjoy your purchase!`.rainbow);
+      Thank you for choosing Bamazon. Have a great day!`.rainbow);
     }
   });
 }

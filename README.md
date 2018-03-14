@@ -1,6 +1,6 @@
 # Bamazon
 ***
-    *Command line shopping app made with node.js and mySQL. 
+    Command line shopping app made with node.js and mySQL. 
 
 ## Customer View
 ***    

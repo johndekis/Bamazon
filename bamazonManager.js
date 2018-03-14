@@ -111,12 +111,10 @@ function reStock(){
     //pusher(productArray);
     connection.query('SELECT * FROM products', function(err, results){
         for(var i = 0; i<results.length; i++){
-            //var productArray = [];
-            productArray.push(results[i].product_name);
-            //console.log(productArray);
-           
+            
+            productArray.push(results[i].product_name);        
         }
-    //console.log(productArray);
+    
     inquirer.prompt([
         {
             name: "product",
@@ -132,10 +130,9 @@ function reStock(){
         }
     ]).then(answers => {
         connection.query("SELECT * from products WHERE product_name=?",[answers.product],function(err,results){
-            var current = parseInt(results[0].stock_quantity);
-
-            var updated = current + parseInt(answers.amount);
-            console.log(updated);
+            var current = parseInt(results[0].stock_quantity),
+                updated = current + parseInt(answers.amount);            
+            
             connection.query('UPDATE products SET stock_quantity=? WHERE product_name=?', [updated, answers.product]);
             console.log(`
         Drones pillaging, please wait...
@@ -176,7 +173,9 @@ function addProduct(){
     ]).then(answers => {
         
         connection.query('INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?);', [answers.newThing, answers.dept, answers.price, answers.amount]);
-        console.log(`${answers.newThing} added to the ${answers.dept} Department! `.rainbow);
+        console.log(`
+    ${answers.newThing} added to the ${answers.dept} Department! 
+        `.rainbow);
      recurz();   
     });
     
