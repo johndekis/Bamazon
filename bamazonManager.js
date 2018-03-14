@@ -72,7 +72,7 @@ function tabulate(){
         table.push([results[i].id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity]);
             }
    console.log(`  
- ${table.toString()} 
+${table.toString()} 
     `);
     recurz();
    });

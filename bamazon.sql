@@ -7,12 +7,13 @@ CREATE TABLE products (
     product_name VARCHAR(50),
     department_name VARCHAR(50),
     price DECIMAL(10,4),
-    stock_quantity INT DEFAULT 0
+    stock_quantity INT DEFAULT 0,
+    PRIMARY KEY(id) 
 );
 
-SELECT * FROM bamazon;
+SELECT * FROM products;
 
---10 filler seeds
+-- filler seeds
 INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES
     ('Keyblade', 'Weapons', 100000.00, 100),
